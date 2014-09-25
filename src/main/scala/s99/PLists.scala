@@ -51,12 +51,21 @@ object PLists {
   //    Example:
   //    scala> reverse(List(1, 1, 2, 3, 5, 8))
   //    res0: List[Int] = List(8, 5, 3, 2, 1, 1)
+  def reverse[A](ls: List[A]): List[A] = ls match {
+    case h :: Nil   => List(h)
+    case h :: tail  => reverse(tail) ::: List(h)
+    case _          => List()
+  }
 
   //    P06 (*) Find out whether a list is a palindrome.
   //    Example:
   //    scala> isPalindrome(List(1, 2, 3, 2, 1))
   //    res0: Boolean = true
+  def isPalindrome[A](ls: List[A]): Boolean = ls == ls.reverse
 
+  def isPalindromeRec[A](ls: List[A]): Boolean = {
+    ls.size <=1 || ls.head == ls.last && isPalindromeRec(ls.tail.init)
+  }
   //    P07 (**) Flatten a nested list structure.
   //    Example:
   //    scala> flatten(List(List(1, 1), 2, List(3, List(5, 8))))

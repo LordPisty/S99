@@ -44,4 +44,25 @@ class PListsSuite extends FunSuite {
   test("Long list with length 6") {
     assert(length(List(1,2,3,4,5,6)) === 6)
   }
+
+  test("Reversed string") {
+    assert(reverse(List(1, 1, 2, 3, 5, 8)) == List(8, 5, 3, 2, 1, 1))
+  }
+
+  test("Palindrome check") {
+    assert(isPalindrome(List(1, 2, 3, 2, 1)) == true)
+  }
+
+  test("Palindrome Recursive check") {
+    assert(isPalindromeRec(List(1, 2, 3, 2, 1)) == true)
+  }
+
+  test("Palindrome check false") {
+    assert(isPalindrome(List(1, 2, 3, 5, 1)) == false)
+  }
+
+  test("Palindrome Recursive check false") {
+    assert(isPalindromeRec(List(1, 2)) == false)
+  }
+
 }
