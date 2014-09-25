@@ -25,4 +25,11 @@ class PListsSuite extends FunSuite {
     intercept[NoSuchElementException] {last(List[Int]())}
   }
 
+  test("Penultimate should return proper element") {
+    assert(penultimate(List(1,1,2,3,5,8)) === 5)
+  }
+
+  test("Second element should return - zero based index") {
+    assert(nth(2, List(1, 1, 2, 3, 5, 8)) === 2)
+  }
 }
