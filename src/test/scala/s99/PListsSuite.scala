@@ -32,4 +32,16 @@ class PListsSuite extends FunSuite {
   test("Second element should return - zero based index") {
     assert(nth(2, List(1, 1, 2, 3, 5, 8)) === 2)
   }
+
+  test("Empty list with length 0") {
+    assert(length(List()) === 0)
+  }
+
+  test("Singleton list with length 1") {
+    assert(length(List(342)) === 1)
+  }
+
+  test("Long list with length 6") {
+    assert(length(List(1,2,3,4,5,6)) === 6)
+  }
 }
