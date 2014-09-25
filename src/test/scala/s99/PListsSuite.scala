@@ -1,4 +1,4 @@
-package p99
+package s99
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
