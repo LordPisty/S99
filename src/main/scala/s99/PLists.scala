@@ -71,7 +71,12 @@ object PLists {
   //    Example:
   //    scala> flatten(List(List(1, 1), 2, List(3, List(5, 8))))
   //    res0: List[Any] = List(1, 1, 2, 3, 5, 8)
-  def flatten(ls: List[Any]): List[Any] = ls match {
+  def flatten(ls:List[Any]): List[Any] = ls flatMap {
+    case nls: List[_] => flatten(nls)
+    case el => List(el)
+  }
+
+  def flattenNoFlat(ls: List[Any]): List[Any] = ls match {
     case h :: Nil => h match {
       case p: List[Any] => flatten(p)
       case x => List(x)
@@ -101,8 +106,8 @@ object PLists {
   //		Example:
   //		scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
   //		res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
-  def pack[A](ls: List[A]): List[Any] = {
-    def pack_acc(prec: A, run: List[A], lst: List[A]): List[Any] = lst match {
+  def pack[A](ls: List[A]): List[List[A]] = {
+    def pack_acc(prec: A, run: List[A], lst: List[A]): List[List[A]] = lst match {
       case Nil => List(run)
       case h :: Nil => if (h == prec) List(run :+ h) else List(run,List(h))
       case h :: tail => if (h == prec) pack_acc(prec, run :+ h, tail) else List(run) ::: pack_acc(h, List(h), tail)
@@ -116,13 +121,8 @@ object PLists {
   //		Example:
   //		scala> encode(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
   //		res0: List[(Int, Symbol)] = List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
-  def encode[A](ls: List[A]): List[(Int, Any)] = {
-    def encode_acc(prec: A, run: List[A], lst: List[A]): List[(Int, Any)] = lst match {
-      case Nil => List((run.length, prec))
-      case h :: Nil => if (h == prec) List((run.length + 1, h)) else List((run.length, prec),(1,h))
-      case h :: tail => if (h == prec) encode_acc(prec, run :+ h, tail) else List((run.length, prec)) ::: encode_acc(h, List(h), tail)
-    }
-    if (ls.isEmpty) List() else encode_acc(ls.head, List(ls.head), ls.tail)
+  def encode[A](ls: List[A]): List[(Int, A)] = {
+    pack(ls) map { e => (e.length, e.head) }
   }
 
   //		P11 (*) Modified run-length encoding.
@@ -157,16 +157,31 @@ object PLists {
   //		Example:
   //		scala> encodeDirect(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
   //		res0: List[(Int, Symbol)] = List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
+  def encodeDirect[A](ls: List[A]): List[(Int, Any)] = {
+    def encode_acc(prec: A, run: List[A], lst: List[A]): List[(Int, Any)] = lst match {
+      case Nil => List((run.length, prec))
+      case h :: Nil => if (h == prec) List((run.length + 1, h)) else List((run.length, prec),(1,h))
+      case h :: tail => if (h == prec) encode_acc(prec, run :+ h, tail) else List((run.length, prec)) ::: encode_acc(h, List(h), tail)
+    }
+    if (ls.isEmpty) List() else encode_acc(ls.head, List(ls.head), ls.tail)
+  }
 
   //		P14 (*) Duplicate the elements of a list.
   //		Example:
   //		scala> duplicate(List('a, 'b, 'c, 'c, 'd))
   //		res0: List[Symbol] = List('a, 'a, 'b, 'b, 'c, 'c, 'c, 'c, 'd, 'd)
+  def duplicate[A](ls: List[A]): List[A] = ls flatMap { e => List(e, e) }
 
   //		P15 (**) Duplicate the elements of a list a given number of times.
   //		Example:
   //		scala> duplicateN(3, List('a, 'b, 'c, 'c, 'd))
   //		res0: List[Symbol] = List('a, 'a, 'a, 'b, 'b, 'b, 'c, 'c, 'c, 'c, 'c, 'c, 'd, 'd, 'd)
+  def duplicateN[A](idx: Int, ls: List[A]): List[A] = {
+    def duplicateEl(iidx: Int, el: A): List[A] = if (iidx == 1) List(el) else el :: duplicateEl(iidx - 1, el)
+    ls flatMap { e => duplicateEl(idx, e) }
+  }
+
+  def duplicateNShort[A](n: Int, ls: List[A]): List[A] = ls flatMap { List.fill(n)(_) }
 
   //		P16 (**) Drop every Nth element from a list.
   //		Example:

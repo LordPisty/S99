@@ -124,4 +124,28 @@ class PListsSuite extends FunSuite {
   test("Decode") {
     assert(decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))) == List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
   }
+
+  test("Direct Encode") {
+    assert(encodeDirect(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)) == List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e)))
+  }
+
+  test("Direct Encode singleton") {
+    assert(encodeDirect(List('a)) == List((1,'a)))
+  }
+
+  test("Direct Encode flat") {
+    assert(encodeDirect(List('a, 'b, 'c, 'a, 'd, 'e)) == List((1,'a), (1,'b), (1,'c), (1,'a), (1,'d), (1,'e)))
+  }
+
+  test("Duplicate") {
+    assert(duplicate(List('a, 'b, 'c, 'c, 'd)) == List('a, 'a, 'b, 'b, 'c, 'c, 'c, 'c, 'd, 'd))
+  }
+
+  test("Duplicate 3") {
+    assert(duplicateN(3, List('a, 'b, 'c, 'c, 'd)) == List('a, 'a, 'a, 'b, 'b, 'b, 'c, 'c, 'c, 'c, 'c, 'c, 'd, 'd, 'd))
+  }
+
+  test("Duplicate 3 short") {
+    assert(duplicateNShort(3, List('a, 'b, 'c, 'c, 'd)) == List('a, 'a, 'a, 'b, 'b, 'b, 'c, 'c, 'c, 'c, 'c, 'c, 'd, 'd, 'd))
+  }
 }
