@@ -108,4 +108,20 @@ class PListsSuite extends FunSuite {
   test("Encode flat") {
     assert(encode(List('a, 'b, 'c, 'a, 'd, 'e)) == List((1,'a), (1,'b), (1,'c), (1,'a), (1,'d), (1,'e)))
   }
+
+  test("Encode Modified") {
+    assert(encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)) == List((4,'a), 'b, (2,'c), (2,'a), 'd, (4,'e)))
+  }
+
+  test("Encode Modified singleton") {
+    assert(encodeModified(List('a)) == List('a))
+  }
+
+  test("Encode Modified flat") {
+    assert(encodeModified(List('a, 'b, 'c, 'a, 'd, 'e)) == List('a, 'b, 'c, 'a, 'd, 'e))
+  }
+
+  test("Decode") {
+    assert(decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))) == List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
+  }
 }

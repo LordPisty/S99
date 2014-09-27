@@ -124,19 +124,34 @@ object PLists {
     }
     if (ls.isEmpty) List() else encode_acc(ls.head, List(ls.head), ls.tail)
   }
-  
+
   //		P11 (*) Modified run-length encoding.
   //		Modify the result of problem P10 in such a way that if an element has no duplicates it is simply copied into the result list. Only elements with duplicates are transferred as (N, E) terms.
   //		Example:
   //		scala> encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
   //		res0: List[Any] = List((4,'a), 'b, (2,'c), (2,'a), 'd, (4,'e))
+  def encodeModified[A](ls: List[A]): List[Any] = {
+    def encode_acc(prec: A, run: List[A], lst: List[A]): List[Any] = lst match {
+      case Nil => if (run.length == 1) List(prec) else List((run.length, prec))
+      case h :: Nil => if (h == prec) List((run.length + 1, h)) else if (run.length == 1) List(prec,h) else List((run.length, prec),h) //List((run.length, prec),(1,h))
+      case h :: tail => if (h == prec) encode_acc(prec, run :+ h, tail) else (if (run.length == 1) List(prec) else List((run.length, prec))) ::: encode_acc(h, List(h), tail)
+    }
+    if (ls.isEmpty) List() else encode_acc(ls.head, List(ls.head), ls.tail)
+  }
 
   //		P12 (**) Decode a run-length encoded list.
   //		Given a run-length code list generated as specified in problem P10, construct its uncompressed version.
   //		Example:
   //		scala> decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e)))
   //		res0: List[Symbol] = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
-
+  def decode[A](ls: List[(Int, A)]): List[A] = {
+    def decodeRun[A](run: (Int, A)): List[A] = if (run._1 > 1) run._2 :: decodeRun((run._1 - 1, run._2)) else List(run._2)
+    ls match {
+      case Nil => List()
+      case h :: Nil => decodeRun(h)
+      case h :: tail => decodeRun(h) ::: decode(tail)
+    }
+  }
   //		P13 (**) Run-length encoding of a list (direct solution).
   //		Implement the so-called run-length encoding data compression method directly. I.e. don't use other methods you've written (like P09's pack); do all the work directly.
   //		Example:
