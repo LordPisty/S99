@@ -187,11 +187,25 @@ object PLists {
   //		Example:
   //		scala> drop(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
   //		res0: List[Symbol] = List('a, 'b, 'd, 'e, 'g, 'h, 'j, 'k)
+  def drop[A](n: Int, ls: List[A]): List[A] = {
+    def dropR(curr: Int, currList: List[A]): List[A] = (curr, currList) match {
+      case (_, Nil)       => Nil
+      case (1, _ :: tail) => dropR(n, tail)
+      case (_, h :: tail) => h :: dropR(curr - 1, tail)
+    }
+    dropR(n, ls)
+  }
 
   //		P17 (*) Split a list into two parts.
   //		The length of the first part is given. Use a Tuple for your result.
   //		Example:
   //		scala> split(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
   //		res0: (List[Symbol], List[Symbol]) = (List('a, 'b, 'c),List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+
+  // !!!WRONG FOR EDGE CASES !!!
+  def split[A](n: Int, ls: List[A]): (List[A], List[A]) = {
+    def splitR(n: Int, ls_first: List[A], ls_current: List[A]): (List[A], List[A]) = if (n == 1) (ls_first :+ ls_current.head, ls_current.tail) else splitR(n-1, ls_first :+ ls_current.head, ls_current.tail)
+    splitR(n, List(), ls)
+  }
 }
 
