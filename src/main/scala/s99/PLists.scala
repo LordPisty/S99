@@ -207,5 +207,9 @@ object PLists {
     def splitR(n: Int, ls_first: List[A], ls_current: List[A]): (List[A], List[A]) = if (n == 1) (ls_first :+ ls_current.head, ls_current.tail) else splitR(n-1, ls_first :+ ls_current.head, ls_current.tail)
     splitR(n, List(), ls)
   }
+
+  def splitFunctional[A](n: Int, ls: List[A]): (List[A], List[A]) = (ls.take(n), ls.drop(n))
+
+  def splitBuiltin[A](n: Int, ls: List[A]): (List[A], List[A]) = ls.splitAt(n)
 }
 
